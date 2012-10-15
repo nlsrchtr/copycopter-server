@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe DefaultCreator do
-  let!(:project) { Factory(:project) }
+  let!(:project) { FactoryGirl.create(:project) }
 
   def create_defaults(defaults)
     DefaultCreator.new(project, defaults).create
@@ -14,17 +14,19 @@ describe DefaultCreator do
 
   it 'sets draft content for a list of blurbs' do
     locale = project.locales.first
-    one = Factory(:blurb, :project => project, :key => 'test.one')
-    Factory :localization, :blurb             => one,
-                           :locale            => locale,
-                           :draft_content     => 'draft one',
-                           :published_content => 'published one'
+    one = FactoryGirl.create(:blurb, :project => project, :key => 'test.one')
+    FactoryGirl.create :localization,
+      :blurb             => one,
+      :locale            => locale,
+      :draft_content     => 'draft one',
+      :published_content => 'published one'
 
-    two = Factory :blurb, :project => project, :key => 'test.two'
-    Factory :localization, :blurb             => two,
-                           :locale            => locale,
-                           :draft_content     => 'draft two',
-                           :published_content => 'published two'
+    two = FactoryGirl.create :blurb, :project => project, :key => 'test.two'
+    FactoryGirl.create :localization,
+      :blurb             => two,
+      :locale            => locale,
+      :draft_content     => 'draft two',
+      :published_content => 'published two'
 
     create_defaults 'en.test.one' => 'new one', 'en.test.three' => 'new three'
     project.localizations(true).map(&:draft_content).should =~ ['draft one', 'draft two', 'new three']
@@ -44,9 +46,10 @@ describe DefaultCreator do
 
   it 'creates missing locales' do
     create_defaults 'en.test' => 'value', 'es.test' => 'valor'
-    project.draft_json.should == Yajl::Encoder.encode(
-      'en.test' => 'value', 'es.test' => 'valor'
-    )
+    Yajl::Parser.parse(project.draft_json).should == {
+      'en.test' => 'value',
+      'es.test' => 'valor'
+    }
   end
 
   it 'activates after creating a blurb' do

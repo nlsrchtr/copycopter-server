@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ProjectsController, 'show' do
   before do
-    @project = Factory(:project)
+    @project = FactoryGirl.create(:project)
     @project.create_defaults 'en.test' => 'value'
   end
 

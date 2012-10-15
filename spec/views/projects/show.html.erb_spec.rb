@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe '/projects/show' do
   before do
-    @project = Factory(:project)
+    @project = FactoryGirl.create(:project)
     @project.create_defaults 'en.test' => 'value'
-    @localizations = [Factory.stub(:localization)]
+    @localizations = [FactoryGirl.build_stubbed(:localization)]
     @locale = @project.locales.first
 
     view.stubs :cache

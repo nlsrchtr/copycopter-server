@@ -42,7 +42,7 @@ describe KeyedRelation do
   end
 
   def create_keyed_record(key)
-    Factory(:blurb, :key => key)
+    FactoryGirl.create(:blurb, :key => key)
   end
 
   let(:keyed_relation) { KeyedRelation.new(Blurb.all) }

@@ -8,9 +8,9 @@ describe Locale do
   it { should validate_presence_of(:project_id) }
 
   context 'self.enabled_in_order' do
-    let!(:enabled_locales) { [Factory(:locale, :key => 'one'),
-                              Factory(:locale, :key => 'two')] }
-    let!(:disabled_locale) { Factory :locale, :key => 'disabled' }
+    let!(:enabled_locales) { [FactoryGirl.create(:locale, :key => 'one'),
+                              FactoryGirl.create(:locale, :key => 'two')] }
+    let!(:disabled_locale) { FactoryGirl.create :locale, :key => 'disabled' }
 
     before do
       enabled_locales.each do |enabled_locale|
@@ -39,9 +39,9 @@ describe Locale do
 
   context 'self.first_enabled' do
     it 'returns the first enabled locale' do
-      Factory :locale, :key => 'de', :created_at => 1.hour.ago
-      Factory :locale, :key => 'fr', :created_at => 1.day.ago
-      Factory :locale, :key => 'es', :created_at => 2.days.ago,
+      FactoryGirl.create :locale, :key => 'de', :created_at => 1.hour.ago
+      FactoryGirl.create :locale, :key => 'fr', :created_at => 1.day.ago
+      FactoryGirl.create :locale, :key => 'es', :created_at => 2.days.ago,
         :enabled => false
       Locale.first_enabled.key.should == 'fr'
     end
@@ -50,7 +50,7 @@ describe Locale do
   context 'valid?' do
     context 'with existing locale' do
       before do
-        Factory :locale
+        FactoryGirl.create :locale
       end
 
       it { should validate_uniqueness_of(:key).scoped_to(:project_id) }
