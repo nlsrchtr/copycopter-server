@@ -1,0 +1,15 @@
+default: &default_settings
+  adapter: postgresql
+  encoding: unicode
+  host: localhost
+  pool: 5
+  username: root
+  password:
+
+development:
+  <<: *default_settings
+  database: copycopter_development
+
+test:
+  <<: *default_settings
+  database: copycopter_test

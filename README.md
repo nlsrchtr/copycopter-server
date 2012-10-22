@@ -15,38 +15,73 @@ display published content in production, and draft in all other environments.
 A developer can issue a deploy, which marks the latest Version of all Blurbs as
 published.
 
-Setup
------
+Get your copy
+-------------
 
     git clone git://github.com/copycopter/copycopter-server.git
     cd copycopter-server
 
-Deploy
-------
+Set up database
+---------------
 
-Deploy Copycopter Server like any other Rails app. Heroku example:
+For MySQL support:
+
+    cp config/database.mysql.yml config/database.yml
+
+For PostgreSQL support:
+
+    cp config/database.postgres.yml config/database.yml
+
+For SQLite3 support:
+
+    cp config/database.sqlite.yml config/database.yml
+
+Add your connection details to ```config/database.yml```.
+
+In the ```Gemfile``` remove the database connectors you dont't need.
+
+Install dependencies
+--------------------
+
+    bundle install
+
+Adding a Project
+----------------
+
+    bundle exec rake copycopter:project NAME=Iora USERNAME=Copy PASSWORD=Copter
+    
+or at Heroku
+    
+    heroku run rake copycopter:project NAME=Iora USERNAME=Copy PASSWORD=Copter
+
+
+Updating a projects password
+----------------------------
+    
+    bundle exec rake copycopter:change_project_password NAME=IORA OLD=Copter NEW=COPTAH
+
+or at Heroku
+
+    heroku run rake copycopter:change_project_password NAME=IORA OLD=Copter NEW=COPTAH
+
+Removing a project
+------------------
+
+    bundle exec rake copycopter:remove_project NAME=Iora
+
+or at Heroku
+
+    heroku run rake copycopter:remove_project NAME=Iora
+
+Deploy to Heroku
+----------------
+
+Deploy Copycopter Server like any other Rails app.
 
     heroku create --stack cedar
     git push heroku master
     heroku run rake db:migrate
     heroku restart
-
-Adding a Project
-----------------
-
-    heroku run rake copycopter:project NAME=Iora USERNAME=Copy PASSWORD=Copter
-
-Updating a Projects password
-----------------------------
-
-    heroku run rake copycopter:change_project_password NAME=IORA OLD=Copter NEW=COPTAH
-
-Removing a Project
-------------------
-
-To remove a project from Copycopter:
-
-    heroku run rake copycopter:remove_project NAME=Iora
 
 Contribute
 ----------

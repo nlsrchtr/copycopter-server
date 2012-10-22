@@ -4,18 +4,12 @@ class Locale < ActiveRecord::Base
 
   validates_presence_of :key, :project_id
   validates_uniqueness_of :key, :scope => :project_id
-
-  def self.enabled_in_order
-    enabled.order 'key ASC'
-  end
+  
+  scope :enabled, where(:enabled => true)
+  scope :enabled_in_order, enabled.order(:key)
 
   def self.first_enabled
     order(:created_at).enabled.first
   end
 
-  private
-
-  def self.enabled
-    where :enabled => true
-  end
 end

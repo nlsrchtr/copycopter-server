@@ -21,21 +21,14 @@ class Project < ActiveRecord::Base
   before_create :create_caches
   after_create :create_english_locale
   after_destroy :delete_localizations_and_blurbs
-
-  def self.archived
-    where :archived => true
-  end
-
-  def self.active
-    where :archived => false
-  end
+  
+  # Scopes
+  scope :archived, where(:archived => true)
+  scope :active, where(:archived => false)
+  scope :by_name, order(:projects => :name)
 
   def active?
     !archived
-  end
-
-  def self.by_name
-    order 'projects.name'
   end
 
   def create_defaults(hash)
@@ -108,7 +101,7 @@ class Project < ActiveRecord::Base
 
   def delete_localizations_and_blurbs
     transaction do
-      blurb_ids = Blurb.select('id').where(:project_id => self.id).map(&:id)
+      blurb_ids = Blurb.select(:id).where(:project_id => self.id).map(&:id)
       Localization.where(:blurb_id => blurb_ids).delete_all
       Blurb.where(:project_id => self.id).delete_all
     end

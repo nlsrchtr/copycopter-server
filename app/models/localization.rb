@@ -7,10 +7,14 @@ class Localization < ActiveRecord::Base
   validates_presence_of :blurb_id, :locale_id
 
   after_create :create_first_version
-
+  
+  # Scopes
+  scope :ordered, joins(:blurb).order(:blurbs => :key)
+  scope :in_locale, lambda { |locale| where(:locale_id => locale.id) }
+  scope :in_locale_with_blurb, lambda { |locale| includes(:blurb).in_locale(locale).ordered }
+  
   def alternates
-    blurb.localizations.joins(:locale).where(:locales => { :enabled => true }).
-      order 'locales.key'
+    blurb.localizations.joins(:locale).where(:locales => { :enabled => true }).order(:locale => :key)
   end
 
   def as_json(options = nil)
@@ -22,50 +26,17 @@ class Localization < ActiveRecord::Base
   end
 
   def key_with_locale
-    [locale.key, blurb.key].join '.'
-  end
-
-  def self.in_locale(locale)
-    where :locale_id => locale.id
-  end
-
-  def self.in_locale_with_blurb(locale)
-    includes(:blurb).in_locale(locale).ordered
+    [locale.key, blurb.key].join('.')
   end
 
   def latest_version
     versions.last
   end
 
-  def self.latest_version
-    <<-eosql
-      SELECT DISTINCT ON (localization_id) localization_id, id, content
-        FROM versions ORDER BY localization_id DESC, id DESC
-    eosql
-  end
-
   def next_version_number
     versions.count + 1
   end
-
-  def self.ordered
-    joins(:blurb).order 'blurbs.key'
-  end
-
-  def self.publish
-    ActiveRecord::Base.connection.execute <<-eosql
-      UPDATE localizations
-        SET published_version_id = latest_version.id,
-        published_content = latest_version.content,
-        updated_at = '#{connection.quoted_date(Time.now)}'
-      FROM (
-          #{latest_version}
-        ) AS latest_version
-      WHERE latest_version.localization_id = localizations.id
-      AND localizations.id IN (#{scoped.map(&:id).join(',')});
-    eosql
-  end
-
+  
   def publish
     self.class.where(:id => self.id).publish
     reload
@@ -78,7 +49,14 @@ class Localization < ActiveRecord::Base
   def revise(attributes = {})
     latest_version.revise attributes
   end
-
+  
+  def self.publish
+    scoped.map do |s|
+      latest = Version.uniq(:id).select([:id, :localization_id, :content]).where(:localization_id => s.id).order(:localization_id).reverse_order.order(:id).first
+      where(:id => s.id).update_all(:published_version_id => latest.id, :published_content => latest.content)
+    end
+  end
+  
   private
 
   def create_first_version

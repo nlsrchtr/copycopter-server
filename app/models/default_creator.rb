@@ -98,7 +98,7 @@ class DefaultCreator
     scope = Localization.
       joins(:blurb).
       where(:blurbs => { :project_id => project.id }).
-      select('localizations.locale_id, localizations.blurb_id, localizations.draft_content')
+      select(:localizations => [:locale_id, :blurb_id, :draft_content])
       @localized_defaults = connection.select_rows(scope.to_sql).inject({}) do |result, (locale_id, blurb_id, content)|
       result.update blurb_id.to_i => (result[blurb_id.to_i] || {}).update(locale_id.to_i => content)
     end

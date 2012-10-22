@@ -54,7 +54,7 @@ class Version < ActiveRecord::Base
 
   def update_localization
     unless first_version?
-      localization.update_attributes! :draft_content => content
+      localization.update_attributes!(:draft_content => content)
     end
 
     if publish_after_saving?

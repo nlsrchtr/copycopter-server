@@ -12,18 +12,16 @@ class Blurb < ActiveRecord::Base
 
   # Callbacks
   after_destroy :update_project_caches
-
-  def self.ordered
-    order 'blurbs.key ASC'
-  end
+  
+  # Scopes
+  scope :ordered, order(:key)
 
   def self.to_hash(attribute)
-    scope = joins(:localizations => :locale).
-      select("blurbs.key AS blurb_key, locales.key AS locale_key, #{attribute} AS content")
+    scope = joins(:localizations => :locale).select([:blurbs => :key, :locales => :key, :localizations => attribute.to_sym])
     blurbs = connection.select_rows(scope.to_sql)
     
     data = blurbs.inject({}) do |result, (blurb_key, locale_key, content)|
-      key = [locale_key, blurb_key].join(".")
+      key = [locale_key, blurb_key].join('.')
       result.update key => content
     end
 
@@ -35,11 +33,11 @@ class Blurb < ActiveRecord::Base
 
     { :data => data, :hierarchichal_data => hierarchichal_data }
   end
-
+  
   def self.keys
-    select('key').map { |blurb| blurb.key }
+    select(:key).map { |blurb| blurb.key }
   end
-
+  
   private
   def self.create_hierarchichal_hash_from_array(array_hierarchy, hash_hierarchy = {})
     return hash_hierarchy if array_hierarchy.empty?
