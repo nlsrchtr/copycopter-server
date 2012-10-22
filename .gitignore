@@ -4,3 +4,4 @@ vendor/cache
 .rvmrc
 tmp/**/*
 tmp/restart.txt
+db/database.yml
