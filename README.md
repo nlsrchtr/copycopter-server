@@ -38,14 +38,14 @@ For SQLite3 support:
 
 Add your connection details to ```config/database.yml```.
 
-In the ```Gemfile``` remove the database connectors you dont't need.
+In the ```Gemfile``` remove the database connectors you don't need.
 
 Install dependencies
 --------------------
 
     bundle install
 
-Adding a Project
+Adding a project
 ----------------
 
     bundle exec rake copycopter:project NAME=Iora USERNAME=Copy PASSWORD=Copter
