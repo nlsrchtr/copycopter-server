@@ -6,10 +6,10 @@ gem 'flutie', '~> 1.3.3'
 gem 'bourbon', '~> 2.1.1'
 gem 'formtastic', '~> 2.2.1'
 gem 'htmldiff', '~> 0.0.1'
-gem 'thin', '~> 1.5.0'
 gem 'yajl-ruby', '~> 1.1.0', :require => 'yajl'
 gem 'jquery-rails', '~> 2.1.3'
 gem 'squeel', '~> 1.0.13'
+gem 'airbrake', '~> 3.1.6'
 
 gem 'sqlite3' # Remove if not needed
 gem 'pg' # Remove if not needed
@@ -22,9 +22,11 @@ group :assets do
   gem 'yui-compressor'
 end
 
+group :development do
+  gem 'capistrano', '~> 2.13.4'
+end
+
 group :development, :test do
-  gem 'foreman', '~> 0.60.2'
-  gem 'launchy', '~> 2.1.2'
   gem 'rspec-rails', '~> 2.11.4'
   gem 'spork', '~> 0.9.2'
 end

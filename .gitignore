@@ -5,3 +5,5 @@ vendor/cache
 tmp/**/*
 tmp/restart.txt
 config/database.yml
+config/deploy.rb
+config/initializers/airbrake.rb
