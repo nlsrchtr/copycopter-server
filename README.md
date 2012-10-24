@@ -49,7 +49,7 @@ Adding a project
 ----------------
 
     bundle exec rake copycopter:project NAME=Iora USERNAME=Copy PASSWORD=Copter
-    
+
 or at Heroku
     
     heroku run rake copycopter:project NAME=Iora USERNAME=Copy PASSWORD=Copter
@@ -73,37 +73,34 @@ or at Heroku
 
     heroku run rake copycopter:remove_project NAME=Iora
 
-Deploy to Heroku
-----------------
+Deploy
+------
 
 Deploy Copycopter Server like any other Rails app.
 
-    heroku create --stack cedar
-    git push heroku master
-    heroku run rake db:migrate
-    heroku restart
+with Capistrano
+
+1. Create your own deploy.rb: ````cp config/deploy.example.rb config/deploy.rb````
+2. Change ````config/deploy.rb```` to your own needs
+3. Take care to include a ````config/database.yml```` into your deployment
+4. Run the deploy setup: ````cap deploy:setup````
+5. Run initial deployment: ````cap deploy````
+6. Migrate the database: ````cap deploy:migrate````
+
+to Heroku
+
+1. Create your own app: ````heroku create --stack cedar````
+2. Push the code to Heroku: ````git push heroku master````
+3. Migrate the database: ````heroku run rake db:migrate````
+4. Restart your app: ````heroku restart````
 
 Contribute
 ----------
 
-See the [style guide](https://github.com/copycopter/style-guide).
-
-Set up dependencies:
-
-    bundle
-
-Run the test suite:
-
-    bundle exec rake
-
-Run the server:
-
-    foreman start
-
-Automatically regenerate CSS when you edit Sass files:
-
-    sass --watch public/stylesheets/sass:public/stylesheets \
-      -r ./public/stylesheets/sass/bourbon/lib/bourbon.rb
+1. See the [style guide](https://github.com/copycopter/style-guide).
+2. Set up dependencies: ````bundle````
+3. Run the test suite: ````bundle exec rake````
+4. Make sure all tests are passed
 
 Credits
 -------
